@@ -1,0 +1,113 @@
+@startuml login
+
+
+skinparam dpi 300
+
+title "[**Authentication**] Login"
+
+actor Client
+
+participant AuthServer
+
+database Database
+
+activate Client
+Client -> AuthServer : /POST login
+activate AuthServer
+AuthServer -> Database : Get user
+activate Database
+alt #LightGreen User Found
+  Database --> AuthServer : User Found
+  deactivate Database
+  AuthServer -> AuthServer : Compare Password
+  alt #LightGreen Correct Password 
+    AuthServer --> Client : JWT Auth Token
+  else #Pink Incorrect Password
+    AuthServer --> Client : Invalid Credentials 
+  end
+else #Pink User doesn't exist
+  AuthServer --> Client : Invalid Credentials
+  deactivate AuthServer 
+end
+
+
+@enduml
+
+
+@startuml registeration
+
+
+skinparam dpi 300
+
+title "[**Authentication**] Registration"
+
+actor Client
+
+participant AuthServer
+
+database Database
+
+activate Client
+Client -> AuthServer : /POST register
+activate AuthServer
+
+AuthServer -> AuthServer : Validate user input
+
+alt #LightGreen Valid data 
+  AuthServer -> Database : Save user
+  activate Database
+  alt #LightGreen User Added
+    Database --> AuthServer : User added
+    AuthServer --> Client : User added
+  else #Pink Database error
+    Database --> AuthServer : error adding user
+    deactivate Database
+    AuthServer --> Client : Coudn't add the user
+  end
+else #Pink Invalid data
+  AuthServer --> Client : Invalid data
+  deactivate AuthServer
+end
+
+@enduml
+
+
+@startuml authorization
+
+
+skinparam dpi 300
+
+title "[**Authentication**]\nAccess Protected Resources"
+
+actor Client
+
+participant "Protected Resource" as PR
+participant AuthServer
+
+database Database
+
+activate Client
+
+Client -> PR : Request
+activate PR
+PR -> AuthServer : check if authorized
+activate AuthServer
+
+alt #Pink Authentication Header\nNot Fonud
+  AuthServer --> Client : Not authorized
+else #Pink Malformed Token
+  AuthServer --> Client : Not authorized
+else #Pink Token Signature don't match
+  AuthServer --> Client : Not authorized
+else #Pink Token Expired
+  AuthServer --> Client : Not authorized
+else #LightGreen Token is okay 
+  AuthServer --> PR : Authorized
+  deactivate AuthServer
+  PR --> Client : Response
+  deactivate PR
+end
+
+
+
+@enduml

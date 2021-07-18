@@ -1,0 +1,90 @@
+@startuml REST API Dev
+skinparam dpi 300
+
+title "[**API**] Development & Testing"
+actor Developer
+package "Testing/Debugging" as dev {
+  usecase checkDB as "**GET** /checkDB
+  --
+  check if the database\n is okay"
+  usecase ping as "**GET** /ping
+  --
+  check if the server\nworking correctly" 
+}
+
+Developer --> checkDB
+Developer --> ping
+
+@enduml
+
+@startuml REST API Static files
+skinparam dpi 300
+
+title "[**API**] Static Files"
+actor "Frontend User" as f
+package "Static Files" as static {
+  usecase getImg as "**GET** /img/<img_id>
+--
+  retrive image by its id"
+}
+f --> getImg
+@enduml
+
+@startuml REST API
+skinparam dpi 300
+
+title "[**API**] Reports"
+
+actor "Frontend User" as f
+
+
+package "Reports" as reports {
+  usecase get_reports_all as "**GET** /reports
+  --
+  Return all\nmissing reports"
+  usecase get_reports_missing as "**GET** /reports/missing
+  --
+  Return all\nmissing reports"
+  usecase post_reports_missing as "**POST** /reports/missing
+  --
+  Add new\nmissing report"
+  usecase get_reports_found as "**GET** /reports/found
+  --
+  Return all\nfound reports"
+  usecase post_reports_found as "**POST** /reports/found
+  --
+  Add new\nfound report"
+ 
+  usecase get_report_id as "**GET** /reports/<report_id>
+  --
+  Get report\nby its id"
+
+  usecase get_report_id_matching as "**GET** /reports/<report_id>/matchings
+  --
+  Get reports that\nmatch the given report"
+}
+
+f ---> reports
+
+@enduml
+
+
+@startuml REST API auth
+skinparam dpi 300
+
+title "[**API**] Authentication"
+actor "Frontend User" as f
+
+package "Authentication" as dev {
+  usecase reg as "**POST** /register
+  --
+  Register a new user"
+  usecase log as "**POST** /login
+  --
+  Login the user with\nthe provided credentials" 
+}
+
+f --> reg
+f --> log
+
+@enduml

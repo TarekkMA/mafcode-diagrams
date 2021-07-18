@@ -1,0 +1,66 @@
+@startuml Database ER
+' uncomment the line below if you're using computer with a retina display
+skinparam dpi 300
+skinparam tabSize 8
+!define Document(name,desc) map "**Document**\ndesc" as name << (D,#FFAAAA) >>
+' we use bold for primary key
+' green color for unique
+' and underscore for not_null
+!define primary_key(x) <b>x</b>
+!define unique(x) <color:green>x</color>
+!define not_null(x) <u>x</u>
+' other tags available:
+' <i></i>
+' <back:COLOR></color>, where color is a color name or html color code
+' (#FFAACC)
+' see: http://plantuml.com/classes.html#More
+hide methods
+hide stereotypes
+hide empty members
+hide empty fields
+hide empty attributes
+hide empty methods
+hide circle
+
+title Database Schema
+
+Document(User, "User") {
+  primary_key(unique(_id)) => ObjectId
+  unique(email) => String
+  password_hash => String
+  first_name => String
+  last_name => String
+  notification_token => String
+
+  created_at => DateTime
+  updated_at => DateTime
+  deleted_at => DateTime
+}
+
+map "**Enum**\nReportType" as report_type {
+  0 => MISSING
+  1 => FOUND
+}
+
+
+Document(Person, "Person") {
+  primary_key(unique(_id)) => ObjectId
+  found => Boolean
+}
+
+Document(Report, "Report") {
+  primary_key(unique(_id)) => ObjectId
+  report_type *-> report_type
+  photo_id => String
+  name => String
+  latitude => Float
+  longitude => Float
+  age => Int
+  clothing => String
+  notes => String
+  person *--> Person
+}
+
+User -right-o Report
+
+@enduml
